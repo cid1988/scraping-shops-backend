@@ -22,7 +22,6 @@ app.get(API_PATH + '/fravega', async function(req, res){
       let a = await fravega(dir)
       productos.push(a)
    }
-   
    res.json(productos)
 });
 
