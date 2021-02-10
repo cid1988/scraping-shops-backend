@@ -86,6 +86,8 @@ const direccionesGarbarino = [
 //    next();
 // });
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use(cors());
 
 app.listen(port, function() {
