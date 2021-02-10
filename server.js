@@ -2,6 +2,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 const port = process.env.PORT || 3000;
 const API_PATH = '/api';
@@ -77,13 +78,15 @@ const direccionesGarbarino = [
 
 // app.use(express.static(__dirname + '/public/'));
 
-app.use(function(req, res, next) {
-   res.header("Access-Control-Allow-Origin", '*');
-   res.header("Access-Control-Allow-Credentials", true);
-   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-   res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-   next();
-});
+// app.use(function(req, res, next) {
+//    res.header("Access-Control-Allow-Origin", '*');
+//    res.header("Access-Control-Allow-Credentials", true);
+//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//    res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
+//    next();
+// });
+
+app.use(cors());
 
 app.listen(port, function() {
    console.log("Server corriendo en el puerto: " + port)
