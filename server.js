@@ -15,6 +15,8 @@ const direcciones = [
    "https://www.fravega.com/l/?categorias=informatica%2Fgaming-pc"
 ]
 
+titulos = [];
+
 app.get(API_PATH + '/fravega', async function(req, res){
    const productos = [];
 
@@ -24,7 +26,14 @@ app.get(API_PATH + '/fravega', async function(req, res){
       let a = await fravega(dir)
       productos.push(a)
    }
-   res.json(productos)
+   for (let i = 0; i < direccionesGarbarino.length; i++) {
+      const dir = direccionesGarbarino[i];
+      
+      let b = await garbarino(dir)
+      productos.push(b)
+   }
+   res.json(productos);
+   // console.log(titulos)
 });
 
 const fravega = function(direccion){
@@ -40,36 +49,63 @@ const fravega = function(direccion){
                let titulo = $(this).find('article div h4').text();
                let href = $(this).attr('href');
                let precioFinal = $(this).find('article div div span').text();
-   
-               productos.push({'titulo': titulo, 'Precio final': precioFinal, 'link': 'fravega.com' + href})
+               let img = $(this).find('img').eq(0).attr('src');
+
+               productos.push({'titulo': titulo, 'precioFinal': precioFinal, 'link': 'www.fravega.com' + href, img: img});
+               titulos.push(titulo);
             });
             resolve(productos);
          }
       })
    })
-   
 }
 
 const garbarino = function(direccion){
-   console.log(direccion)
-   request(direccion, (error, response, html)=>{
-      if (error) return console.error(error);
-      if(!error && response.statusCode == 200){
-         const $ = cheerio.load(html)
-         const productos = [];
+   return new Promise((resolve, reject) => {
+      request(direccion, (error, response, html)=>{
+         if (error) return console.error(error);
+         if(!error && response.statusCode == 200){
+            const $ = cheerio.load(html, {
+               xml: {
+                 normalizeWhitespace: true,
+               }})
+            const productos = [];
 
-         $('.itemBox--info').each(function(i, e){
-            let titulo = $(this).find('a h3').text();
-            let precioFinal = $(this).find('a div .value-item').text();
-            let link = $(this).find('a').attr('href');
+            $('.itemBox-content').each(function(i, e){
+               let titulo = $(this).find('a h3').text();
+               let precioFinal = $(this).find('a div .value-item').text();
+               let link = $(this).find('a').attr('href');
+               let img = $(this).find('a img').eq(0).attr('src');
 
-            precioFinal = precioFinal.replace("$","")
-            productos.push({'titulo': titulo, 'Precio final': precioFinal, 'link': 'garbarino.com' + link})
-         })
-         console.table(productos)
-      }
+               precioFinal = precioFinal.replace("$","")
+               productos.push({'titulo': titulo, 'precioFinal': precioFinal, 'link': 'www.garbarino.com' + link, img: img});
+               titulos.push(titulo);
+            })
+            resolve(productos);
+         }
+      })
    })
 }
+
+// const garbarino = function(direccion){
+//    request(direccion, (error, response, html)=>{
+//       if (error) return console.error(error);
+//       if(!error && response.statusCode == 200){
+//          const $ = cheerio.load(html)
+//          const productos = [];
+
+//          $('.itemBox--info').each(function(i, e){
+//             let titulo = $(this).find('a h3').text();
+//             let precioFinal = $(this).find('a div .value-item').text();
+//             let link = $(this).find('a').attr('href');
+
+//             precioFinal = precioFinal.replace("$","")
+//             productos.push({'titulo': titulo, 'Precio final': precioFinal, 'link': 'garbarino.com' + link})
+//          })
+//          console.table(productos)
+//       }
+//    })
+// }
 
 
 
@@ -89,7 +125,15 @@ const direccionesGarbarino = [
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
+
+var corOptions = {
+   "origin": "*",
+   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+   "preflightContinue": true,
+   allowedHeaders:  'Content-Type,Authorization,X-Requested-With'
+}
+app.use(cors(corOptions));
 
 app.listen(port, function() {
    console.log("Server corriendo en el puerto: " + port)
