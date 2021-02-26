@@ -123,16 +123,16 @@ const direccionesGarbarino = [
 //    next();
 // });
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-// app.use(cors());
-
 var corOptions = {
    "origin": "*",
    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
    "preflightContinue": true,
    allowedHeaders:  'Content-Type,Authorization,X-Requested-With'
 }
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+// app.use(cors());
 app.use(cors(corOptions));
 
 app.listen(port, function() {
