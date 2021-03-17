@@ -115,20 +115,7 @@ const direccionesGarbarino = [
 
 // app.use(express.static(__dirname + '/public/'));
 
-// app.use(function(req, res, next) {
-//    res.header("Access-Control-Allow-Origin", '*');
-//    res.header("Access-Control-Allow-Credentials", true);
-//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-//    res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-//    next();
-// });
 
-var corOptions = {
-   "origin": "*",
-   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-   "preflightContinue": true,
-   allowedHeaders:  'Content-Type,Authorization,X-Requested-With'
-}
 
 app.use(function(req, res, next) {
    res.header('Access-Control-Allow-Origin', '*');
@@ -141,7 +128,6 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 // app.use(cors());
-// app.use(cors(corOptions));
 
 app.listen(port, function() {
    console.log("Server corriendo en el puerto: " + port)
